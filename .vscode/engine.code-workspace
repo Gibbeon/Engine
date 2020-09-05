@@ -4,5 +4,11 @@
 			"path": "../core"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"cstdio": "cpp"
+		},
+		"cmake.autoSelectActiveFolder": false,
+		"cmake.configureOnOpen": true
+	}
 }

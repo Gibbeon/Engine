@@ -3,5 +3,5 @@
 
 int main() {
     printf(getHelloWorld());
-    return 0;
+    return getchar();
 }
