@@ -28,3 +28,5 @@ endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 if (MSVC)
   add_compile_options("/sdl")
 endif()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")

@@ -1,6 +1,7 @@
 #include <cstdio>
+#include "kernel.h"
 
 int main() {
-    printf("Hi");
+    printf(getHelloWorld());
     return 0;
 }
