@@ -1,10 +1,16 @@
 {
 	"folders": [
 		{
-			"path": "../core"
+			"path": "../wrycore"
 		},
 		{
-			"path": "../editor"
+			"path": "../wryedit"
+		},
+		{
+			"path": "../wryd3d12"
+		},
+		{
+			"path": "../wrywin32"
 		}
 	],
 	"settings": {
