@@ -1,8 +1,3 @@
-execute_process(COMMAND
-    ${CMAKE_COMMAND} -E env CLICOLOR_FORCE=1
-    ${CMAKE_COMMAND} -E cmake_echo_color --green --bold "Including global.cmake file"
-)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -10,7 +5,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 file(GLOB_RECURSE source_list "src/*.cpp" "include/*.hpp")
 
 set(CMAKE_STATIC_LIBRARY_PREFIX "")
-set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib)
@@ -29,4 +23,5 @@ if (MSVC)
   add_compile_options("/sdl")
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
