@@ -21,7 +21,7 @@ namespace wry {
         //retval(const retval&) = delete;
         property_t& operator =(const property_t&) = delete;
 
-        property_t& operator =(const type_reference value) {
+        property_t& operator =(type_reference value) {
             set(value);
             return *this;
         }
@@ -50,7 +50,7 @@ namespace wry {
 
         type_reference get() { return _value; }
 
-        property_t& set(const type_reference value) { _value = value; return *this; }
+        property_t& set(type_reference value) { _value = value; return *this; }
         property_t& set(const type value) { _value = value; return *this; }
         
         template <typename Y = T, typename std::enable_if_t<is_unique_ptr<Y>::value || is_shared_ptr<Y>::value>* = nullptr>  
@@ -77,7 +77,7 @@ namespace wry {
 
         template<typename X>
         X as() {
-            return (X)result;
+            return (X)get();
         }
 
     private:
@@ -109,7 +109,7 @@ namespace wry {
 
         template<typename X>
         X as() {
-            return (X)result();
+            return (X)get();
         }
 
     private:

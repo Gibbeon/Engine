@@ -10,8 +10,8 @@
             "args": [],
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": true,
-            "stopAtEntry": true,
+            "externalConsole": false,
+            "stopAtEntry": false,
             "linux": {
                 "MIMode": "gdb",
                 "miDebuggerPath": "/usr/bin/gdb"

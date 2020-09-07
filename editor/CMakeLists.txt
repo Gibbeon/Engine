@@ -22,3 +22,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main)
 
 find_package(core REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE core)
+

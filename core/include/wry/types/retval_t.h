@@ -78,7 +78,7 @@ namespace wry {
 
         template<typename X>
         X as() {
-            return (X)result;
+            return (X)result();
         }
 
     private:
@@ -140,25 +140,20 @@ namespace wry {
         bool_t succeeded() { return statusCode() == SUCCESS; }
         bool_t failed() { return statusCode() != SUCCESS; }
 
-        template<typename X>
-        X as() {
-            return (X)result;
-        }
-
-
     private:
         StatusCode _statusCode;
     };
 
     template <typename T>
     retval_t<T> value(const T& value) {
-        auto result = retval<T> ( std::move(value) ) ;
+        auto result = retval_t<T> ( std::move(value) ) ;
         return result;
     }
 
+
     template <typename T>
     retval_t<T&> reference(T& value) {
-        return retval<T&> ( value );
+        return retval_t<T&> ( value );
     }
 
     retval_t<void> success();
@@ -168,12 +163,12 @@ namespace wry {
     retval_t<T> failed(StatusCode statusCode, gsl::czstring message) {
         
         Expects(statusCode != SUCCESS);
-        return retval<T> { statusCode };
+        return retval_t<T> { statusCode };
     }
 
     template <typename T>
     retval_t<T> failed() {        
-        return retval<T> { UNKNOWN };
+        return retval_t<T> { UNKNOWN };
     }
 
 } // namespace wry

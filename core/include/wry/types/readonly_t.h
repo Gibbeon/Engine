@@ -56,7 +56,7 @@ namespace wry {
 
         template<typename X>
         X as() {
-            return (X)result;
+            return (X)get();
         }
 
     private:
@@ -84,7 +84,7 @@ namespace wry {
 
         template<typename X>
         X as() {
-            return (X)result();
+            return (X)get();
         }
 
     private:
