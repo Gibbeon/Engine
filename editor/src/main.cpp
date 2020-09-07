@@ -1,5 +1,4 @@
-#include <cstdio>
-using namespace std;
+#include <stdio.h>
 
 #include "kernel.h"
 #include <SDL2/SDL.h>

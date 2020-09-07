@@ -1,12 +1,18 @@
 {
+    "env": {
+        "_defaultIncludePath": [
+            "${workspaceFolder}/include/**",
+            "${workspaceFolder}/../core/include/**"
+        ], 
+        "_defines": []
+    },
     "configurations": [
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/include/**",
-                "${workspaceFolder}/../core/include/**"
+                "${_defaultIncludePath}"
             ],
-            "defines": [],
+            "defines": ["${_defines}"],
             "intelliSenseMode": "${default}",
             "cStandard": "c11",
             "cppStandard": "c++17",
@@ -16,10 +22,9 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/include/**",
-                "${workspaceFolder}/../core/include/**"
+                "${_defaultIncludePath}"
             ],
-            "defines": [],
+            "defines": ["${_defines}"],
             "macFrameworkPath": [
                 "/System/Library/Frameworks",
                 "/Library/Frameworks"

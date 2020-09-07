@@ -1,16 +1,35 @@
 {
+    "env": {
+        "_defaultIncludePath": [
+            "${workspaceFolder}/include/**"
+        ], 
+        "_defines": []
+    },
     "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${_defaultIncludePath}"
+            ],
+            "defines": ["${_defines}"],
+            "intelliSenseMode": "${default}",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+        },
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/include/**"
+                "${_defaultIncludePath}"
             ],
-            "defines": [],
+            "defines": ["${_defines}"],
             "macFrameworkPath": [
                 "/System/Library/Frameworks",
                 "/Library/Frameworks"
             ],
-            "intelliSenseMode": "clang-x64",
+            "intelliSenseMode": "${default}",
+            "cStandard": "c11",
             "cppStandard": "c++17",
             "configurationProvider": "ms-vscode.cmake-tools",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json"
