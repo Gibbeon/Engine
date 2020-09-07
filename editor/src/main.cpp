@@ -3,17 +3,61 @@
 #include "wry/gfx/gfx.h"
 
 int main(int argv, char** args){
-	wry::os::Window winMain;
-	winMain.width(1024)
+	
+
+    return 0;
+}
+
+void audio() {
+	/*
+		wry::audio::Mixer 	mixer;
+		mixer.play(wry::io::File("file.wav").toMemoryStream());		
+	*/
+}
+
+void serialization() {
+	/*
+		JsonSerializer serializer(wry::io::File("file.json").toFileStream());
+		Resolver resolver;
+
+		Archive archive(serializer, resolver);
+
+		resolver.resolve(name, interface*);
+
+		ObjectType type = archive.read<ObjectType>();
+
+		serializer.read(name, variable);	//primitive
+		serilaizer.read(variable); 			//ISerializable
+		serializer.read(name, array); 		//ArrayType
+		serializer.read(array); 			//ArrayType
+
+		serializer.write(name, variable);	//primitive
+		serializer.write(variable); 		//ISerializable
+		serializer.write(name, array); 		//ArrayType
+		serializer.write(array); 			//ArrayType
+
+		read(name, primitive &variable) {
+			variable = json[name];
+		}
+
+		read(name, primitive &variable) {
+			stream.read(&variable, sizeof(primitive));
+		}
+	*/
+}
+
+
+void gfx() {
+	/*
+		wry::os::Window winMain;
+		winMain.width(1024)
 			.height(1024)
 			.title("Editor Demo");
 
-	wry::gfx::System 		gfxSystem;
-	wry::gfx::Device		gfxDevice(gfxSystem.adapter());
-
-
-	/*
-				wry::gfx::RenderContext gfxContext(gfxDevice, winMain);
+		wry::gfx::System 		gfxSystem;
+		wry::gfx::Device		gfxDevice(gfxSystem.adapter());
+	
+		wry::gfx::RenderContext gfxContext(gfxDevice, winMain);
 
 		wry::gfx::Resource		gfxVertexBuffer(gfxDevice);
 		gfxVertexBuffer.write([ {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}]);
@@ -77,8 +121,6 @@ int main(int argv, char** args){
 			gfxContext.present();
 		}
 	*/
-
-    return 0;
 }
 
 
