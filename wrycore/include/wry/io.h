@@ -1,4 +1,5 @@
 #include "wry/io/stream.h"
+#include "wry/io/filewatcher.h"
 #include "wry/io/serialization/serializable.h"
 #include "wry/io/serialization/binaryserializationreader.h"
 #include "wry/io/serialization/binaryserializationwriter.h"

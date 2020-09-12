@@ -2,9 +2,40 @@
 #include "wry/gfx.h"
 #include "wry/io.h"
 
+int main(int argv, char** args) {
+    // Create a FileWatcher instance that will check the current folder for changes every 5 seconds
+    wry::io::FileWatcher fw{"./", std::chrono::milliseconds(5000)};
 
-#include <functional>
-#include <map>
+    // Start monitoring a folder for changes and (in case of changes)
+   // run a user provided lambda function
+    fw.start([] (std::string path_to_watch, wry::io::FileStatus status) -> void {
+        // Process only regular files, all other file types are ignored
+        if(!std::filesystem::is_regular_file(std::filesystem::path(path_to_watch)) && status != wry::io::FileStatus::erased) {
+            return;
+        }
+
+        switch(status) {
+            case wry::io::FileStatus::created:
+                std::cout << "File created: " << path_to_watch << '\n';
+                break;
+            case wry::io::FileStatus::modified:
+                std::cout << "File modified: " << path_to_watch << '\n';
+                break;
+            case wry::io::FileStatus::erased:
+                std::cout << "File erased: " << path_to_watch << '\n';
+                break;
+            default:
+                std::cout << "Error! Unknown file status.\n";
+        }
+    });
+
+	return 0;
+}
+
+
+
+
+/* serialization
 
 class SampleInnerGO : wry::io::ISerializable {
 public:
@@ -65,7 +96,6 @@ private:
 };
 
 
-int main(int argv, char** args) {
 	auto object = SampleGO(wry::io::JsonSerializationReader(json::parse("{ \"simple\": \"happy\", \"complex\": { \"simple\": 300 }, \"simpleVector\": [1,2,3,4], \"complexVector\": [ { \"simple\": 500 }, { \"simple\": 600 } ] }" )));
 	
 	json container;
@@ -87,6 +117,7 @@ int main(int argv, char** args) {
 	free(ptr);
 	return 0;
 }
+*/
 
 /*
 struct TypeDescriptor {
