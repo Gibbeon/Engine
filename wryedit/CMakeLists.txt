@@ -15,14 +15,23 @@ add_executable( ${PROJECT_NAME} ${SOURCE_LIST})
 target_include_directories(${PROJECT_NAME} PUBLIC
                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
-                        
-#find_package(wrycore REQUIRED)
-#target_link_libraries(${PROJECT_NAME} PRIVATE wrycore)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+                           $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/../wrycore/include>
+                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/../wrycore/include>)
+
+if(!WIN32)                        
+    find_package(wrycore REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE wrycore)
+endif()
 
 #find_package(wrywin32 REQUIRED)
 #target_link_libraries(${PROJECT_NAME} PRIVATE wrywin32)
 
-find_package(wryd3d12 REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE wryd3d12)
+if(WIN32)
+    find_package(wryd3d12 REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE wryd3d12)
+endif()
 
 include(../shared/cmake/common_projects.cmake)
+

@@ -2,6 +2,43 @@
 #include "wry/gfx.h"
 #include "wry/io.h"
 
+enum ResourceEvent {
+	modified
+};
+
+class IHasResource {
+public:
+	void resourceEvent(ResourceEvent event, Resource& resource);
+};
+
+class GameObject : public IHasResource {
+public:
+	void resourceEvent(ResourceEvent event, Resource& resource) {
+
+	}
+};
+
+class Resource {
+public:
+
+private:
+	std::vector<IHasResource*> _repository;
+};
+
+class Repository {
+public:
+
+private:
+	wry::io::FileWatcher _watcher;
+};
+
+class System {
+public:
+
+private:
+	std::vector<Repository> _repository;
+};
+
 int main(int argv, char** args) {
     // Create a FileWatcher instance that will check the current folder for changes every 5 seconds
     wry::io::FileWatcher fw{"./", std::chrono::milliseconds(5000)};
