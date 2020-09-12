@@ -6,9 +6,13 @@ namespace wry {
     namespace gfx {
         class Adapter {
         public:
-            Adapter() = default;
+            Adapter(vptr_t handle);
             ~Adapter() = default;
-        
+
+            vptr_t handle() const;  
+
+        private:
+            vptr_t _handle;
         };
     } // namespace gfx
 } // namespace wry

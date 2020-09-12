@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.17)
 
-include(cmake/global.cmake)
-include(cmake/vcpkg.cmake)
+include(../shared/cmake/global.cmake)
 
-project(editor VERSION 1.0.0)
+project(wryedit VERSION 1.0.0)
 
 execute_process(COMMAND
     ${CMAKE_COMMAND} -E env CLICOLOR_FORCE=1
@@ -11,15 +10,19 @@ execute_process(COMMAND
 )
 
 # Project files and linking
-add_executable( ${PROJECT_NAME} ${source_list})
+add_executable( ${PROJECT_NAME} ${SOURCE_LIST})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
                         
-find_package(SDL2 CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main)
+#find_package(wrycore REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PRIVATE wrycore)
 
-find_package(core REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE core)
+#find_package(wrywin32 REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PRIVATE wrywin32)
 
+find_package(wryd3d12 REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE wryd3d12)
+
+include(../shared/cmake/common_projects.cmake)

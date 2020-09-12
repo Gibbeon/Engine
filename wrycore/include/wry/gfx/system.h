@@ -7,13 +7,17 @@ namespace wry {
     namespace gfx {
         class System {
         public:
-            System() = default;
+            System();
             ~System() = default;
 
-            gsl::span<Adapter> adapters() const;
-            Adapter& adapter() const;
+            gsl::span<Adapter> adapters();
+            Adapter& defaultAdapter() const;
 
-            System& adapter(Adapter& adapter);
+            System& defaultAdapter(Adapter& adapter);
+
+            vptr_t handle() const;            
+        private:
+            vptr_t      _handle;
         };
     } // namespace gfx
 } // namespace wry

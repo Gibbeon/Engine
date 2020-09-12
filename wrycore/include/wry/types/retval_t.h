@@ -170,7 +170,6 @@ namespace wry {
     retval_t<T> failed() {        
         return retval_t<T> { UNKNOWN };
     }
-
 } // namespace wry
 
 /*

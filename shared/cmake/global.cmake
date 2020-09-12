@@ -1,8 +1,15 @@
+
+#vcpkg
+if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+  set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+endif()
+
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-file(GLOB_RECURSE source_list "src/*.cpp" "include/*.hpp")
+file(GLOB_RECURSE SOURCE_LIST "src/*.cpp" "include/*.hpp")
 
 set(CMAKE_STATIC_LIBRARY_PREFIX "")
 
