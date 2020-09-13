@@ -2,43 +2,285 @@
 #include "wry/gfx.h"
 #include "wry/io.h"
 
-enum ResourceEvent {
-	modified
-};
+#include "wry/res/system.h"
 
-class IHasResource {
+#include <fstream>
+#include <thread>
+#include <chrono>
+
+
+
+class Entity : public wry::io::ISerializable {
 public:
-	void resourceEvent(ResourceEvent event, Resource& resource);
-};
-
-class GameObject : public IHasResource {
-public:
-	void resourceEvent(ResourceEvent event, Resource& resource) {
-
+	Entity() {}
+	
+	template <typename Archive>
+	Entity(Archive& context) : wry::io::ISerializable(context) {
+		context.read("simple", &_simple);
 	}
+
+	template <typename Archive>
+	bool_t serialize(Archive& context) {
+		context.write("simple", _simple);
+		return true;
+	}
+
+	std::string simple() const { return _simple; }
+
+private:
+	std::string _simple;
+};
+
+template <typename TResult>
+TResult func(std::function<TResult()> f) {
+    return TResult();
+}
+
+template <typename Fun>
+auto func(Fun f) -> decltype(f()) {
+    return func(std::function<decltype(f())>(f));
+}
+
+int main(int argv, char** args) {
+
+	wry::res::System system;
+	wry::res::TypeResolver resolver;
+
+	std::function<Entity*(wry::io::JsonSerializationReader&)> lambda = [](wry::io::JsonSerializationReader& var) -> Entity* {
+		return new Entity(var);
+	};
+
+ 	resolver.add<Entity*, wry::io::JsonSerializationReader&>("Entity", lambda);
+	
+	system.mount("./bin/data.json", resolver);
+	auto entity = system.find<Entity>("entity");
+
+	while(true) {
+		Entity* test = (Entity*)entity.get();
+		std::this_thread::sleep_for (std::chrono::seconds(5));
+	}
+
+	return 0;
+}
+
+/* 
+resources
+class TypeResolver {
+public:
+	template <typename Archive>
+	vptr_t create(gsl::czstring name, Archive& context) {
+		return new Entity(context);
+	}
+
+	void free(vptr_t ptr) {
+		delete ptr;
+	}
+};
+
+enum ResourceEvent {
+	changed
 };
 
 class Resource {
 public:
 
+	Resource() {
+		_this = nullptr;
+	}
+
+	template <typename Archive>
+	Resource(Archive& context) {
+		_this = nullptr;
+		load(context);
+	}
+
+	template <typename Archive>
+	void load(Archive& context) {
+		if(_this) this->destroy();
+
+_type = "";
+		//context.read("name", &_name);
+		//context.read("type", &_type);
+
+		TypeResolver type;
+		_this = type.create(_type.c_str(), context);
+	}
+
+	void destroy() {
+		TypeResolver type;
+		type.free(_this);
+		_this = nullptr;
+	}
+
+	vptr_t get() {
+		return _this;
+	}
+
 private:
-	std::vector<IHasResource*> _repository;
+	std::string _name;
+	std::string _type;
+
+	vptr_t _this;
 };
+
+template<typename T>
+class ResourceReference {
+public:
+	ResourceReference(Resource& res) : _res(res) {
+		
+	}
+
+	ResourceReference<T> operator =(const ResourceReference<T> & parent) {
+		return ResourceReference<T>(parent._res);
+	}
+
+	T* get() { return (T*)_res.get(); }
+	Resource& _res;
+
+};
+
+
+class Entity : public wry::io::ISerializable {
+public:
+	Entity() {}
+
+	void update() {
+		
+	}
+	
+	template <typename Archive>
+	Entity(Archive& context) : wry::io::ISerializable(context) {
+		context.read("simple", &_simple);
+		//context.read("complex", &_complex);
+		//context.read("simpleVector", &_simpleVector);
+		//context.read("complexVector", &_complexVector);
+		//context.read("simpleMap", &simpleMap);
+		//context.read("complexMap", &complexMap);
+	}
+
+	template <typename Archive>
+	bool_t serialize(Archive& context) {
+		context.write("simple", _simple);
+		//context.write("complex", _complex);
+		//context.write("simpleVector", _simpleVector);
+		//context.write("complexVector", _complexVector);
+		return true;
+	}
+
+	std::string simple() const { return _simple; }
+	//SampleInnerGO& complex() { return _complex; }
+
+private:
+	std::string _simple;
+	//SampleInnerGO _complex;
+	//std::vector<uint_t> _simpleVector;
+	//std::vector<SampleInnerGO> _complexVector;
+
+	//std::map<gsl::czstring, uint_t> simpleMap;
+	//std::map<gsl::czstring, ISerializable> complexMap;
+};
+
+typedef ResourceReference<Entity> EntityRef;
+
+class Scene {
+public:
+	template<typename Archive>
+	Scene(Archive& archive) {
+
+	}
+
+	void update() {
+		for(auto& entity : _entities) {
+			entity.get()->update();
+		}
+	}
+
+private:
+	Resource* _resource;
+	std::vector<EntityRef> _entities;
+	
+};
+
+
 
 class Repository {
 public:
 
+	template <typename Archive>
+	void on_change(Archive& context, Resource& resource) {
+		resource.load(context);
+	}
+
 private:
-	wry::io::FileWatcher _watcher;
 };
 
 class System {
 public:
+	System() {
+		load();
+		_thread = std::thread([&]()-> void {    
+			wry::io::FileWatcher fw{"./", std::chrono::milliseconds(5000)};
+
+			fw.start([&] (std::string path_to_watch, wry::io::FileStatus status) -> void {
+				if(!std::filesystem::is_regular_file(std::filesystem::path(path_to_watch)) && status != wry::io::FileStatus::erased) {
+					return;
+				}
+
+				switch(status) {
+					case wry::io::FileStatus::created:
+						std::cout << "File created: " << path_to_watch << '\n';
+						break;
+					case wry::io::FileStatus::modified:
+						load();
+						std::cout << "File modified: " << path_to_watch << '\n';
+						break;
+					case wry::io::FileStatus::erased:
+						std::cout << "File erased: " << path_to_watch << '\n';
+						break;
+					default:
+						std::cout << "Error! Unknown file status.\n";
+				}
+			});
+		});
+	}
+
+	void load() {
+		std::string filepath = "./bin/data.json";
+
+		std::ifstream i(filepath);
+		if(!i) throw;
+		json j;
+		i >> j;
+		_resource.load(wry::io::JsonSerializationReader(j));
+	}
+
+	template<typename T>
+	ResourceReference<T> get(gsl::czstring path) {
+		return ResourceReference<T>( _resource );
+	}
 
 private:
+	std::thread _thread;
 	std::vector<Repository> _repository;
+	Resource _resource;
 };
 
+class SceneMgr {
+	ResourceReference<Entity> _scene;
+
+	void load(gsl::czstring name) {
+		System system;
+		_scene = system.get<Entity>(name);
+	}
+
+	void update() {
+		_scene.get()->update();
+	}
+};
+
+
+
+filewatcher
 int main(int argv, char** args) {
     // Create a FileWatcher instance that will check the current folder for changes every 5 seconds
     wry::io::FileWatcher fw{"./", std::chrono::milliseconds(5000)};
@@ -67,10 +309,7 @@ int main(int argv, char** args) {
     });
 
 	return 0;
-}
-
-
-
+} */
 
 /* serialization
 

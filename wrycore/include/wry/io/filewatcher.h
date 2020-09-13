@@ -21,9 +21,17 @@ namespace wry {
 
             // Keep a record of files from the base directory and their last modification time
             FileWatcher(std::string path_to_watch, std::chrono::duration<int, std::milli> delay) : path_to_watch{path_to_watch}, delay{delay} {
-                for(auto &file : std::filesystem::recursive_directory_iterator(path_to_watch)) {
-                    paths_[file.path().string()] = std::filesystem::last_write_time(file);
+                if(std::filesystem::is_regular_file(path_to_watch)) {
+                    paths_[path_to_watch] = std::filesystem::last_write_time(path_to_watch);
+                } else {
+                    for(auto &file : std::filesystem::recursive_directory_iterator(path_to_watch)) {
+                        paths_[file.path().string()] = std::filesystem::last_write_time(file);
+                    }
                 }
+            }
+
+            void stop() {
+                running_ = false;
             }
 
             // Monitor "path_to_watch" for changes and in case of a change execute the user supplied "action" function
@@ -43,19 +51,35 @@ namespace wry {
                         }
                     }
 
-                    // Check if a file was created or modified
-                    for(auto &file : std::filesystem::recursive_directory_iterator(path_to_watch)) {
-                        auto current_file_last_write_time = std::filesystem::last_write_time(file);
+                    if(std::filesystem::is_regular_file(path_to_watch)) {
+                        auto current_file_last_write_time = std::filesystem::last_write_time(path_to_watch);
 
                         // File creation
-                        if(!contains(file.path().string())) {
-                            paths_[file.path().string()] = current_file_last_write_time;
-                            action(file.path().string(), FileStatus::created);
+                        if(!contains(path_to_watch)) {
+                            paths_[path_to_watch] = current_file_last_write_time;
+                            action(path_to_watch, FileStatus::created);
                         // File modification
                         } else {
-                            if(paths_[file.path().string()] != current_file_last_write_time) {
+                            if(paths_[path_to_watch] != current_file_last_write_time) {
+                                paths_[path_to_watch] = current_file_last_write_time;
+                                action(path_to_watch, FileStatus::modified);
+                            }
+                        }
+                    } else {
+                        // Check if a file was created or modified
+                        for(auto &file : std::filesystem::recursive_directory_iterator(path_to_watch)) {
+                            auto current_file_last_write_time = std::filesystem::last_write_time(file);
+
+                            // File creation
+                            if(!contains(file.path().string())) {
                                 paths_[file.path().string()] = current_file_last_write_time;
-                                action(file.path().string(), FileStatus::modified);
+                                action(file.path().string(), FileStatus::created);
+                            // File modification
+                            } else {
+                                if(paths_[file.path().string()] != current_file_last_write_time) {
+                                    paths_[file.path().string()] = current_file_last_write_time;
+                                    action(file.path().string(), FileStatus::modified);
+                                }
                             }
                         }
                     }
